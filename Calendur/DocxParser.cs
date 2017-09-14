@@ -37,8 +37,14 @@ namespace Calendur
                 _context.CurrentParagraph = paragraph;
                 _context.CurrentText = paragraph.Text.Trim();
 
-                if (TryUpdateDay() || TryParsePerson())
-                { }
+                try
+                {
+                    if (TryUpdateDay() || TryParsePerson())
+                    { }
+                }
+                catch (Exception error) {
+                    throw new Exception($"Error on parsing string '{_context.CurrentText}': {error.Message}");
+                }
             }
 
             return _result;
@@ -51,6 +57,13 @@ namespace Calendur
             if (newDay == null)
             {
                 return false;
+            }
+
+            if ((_result.Year % 4) != 0
+                && newDay.Month == 2
+                && newDay.Day == 29)
+            {
+                newDay.Day = 28;
             }
 
             _context.CurrentDay = _result.AddDay(new DateTime(_result.Year, newDay.Month, newDay.Day));
@@ -89,9 +102,9 @@ namespace Calendur
 
     internal class DayTitle
     {
-        public int Month { get; private set; }
+        public int Month { get; set; }
 
-        public int Day { get; private set; }
+        public int Day { get; set; }
 
 
         public static readonly List<string> MonthPatterns = new List<string>

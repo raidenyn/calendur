@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 
@@ -13,19 +14,15 @@ namespace Calendur
 
         public int Year { get; }
 
-        public IDictionary<DateTime, Day> Days { get; protected set; } = new Dictionary<DateTime, Day>();
+        public ConcurrentDictionary<DateTime, Day> Days { get; protected set; } = new ConcurrentDictionary<DateTime, Day>();
 
         public Day AddDay(DateTime date)
         {
-            var day = new Day
+            return Days.GetOrAdd(date, (d) => new Day
             {
-                Date = date.Date,
+                Date = d.Date,
                 Persons = new List<Person>()
-            };
-
-            Days.Add(day.Date, day);
-
-            return day;
+            });
         }
 
         public IReadOnlyCollection<Week> GetByWeeks()
