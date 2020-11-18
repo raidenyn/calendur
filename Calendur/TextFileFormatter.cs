@@ -96,7 +96,7 @@ namespace Calendur
         {
             var a = person.HasAnniversary ? "!" : "";
 
-            return $"~{a}name~{person.Name} {person.Year}|~{a}info~{person.Description}";
+            return $"~{a}name~{person.Name}|~{a}info~{person.Year} {person.Description}";
         }
     }
 }
